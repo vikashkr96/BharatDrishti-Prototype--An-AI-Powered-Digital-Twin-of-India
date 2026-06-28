@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bharat Drishti - India Climate Digital Twin (Mapbox)</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for futuristic icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Mapbox GL JS -->
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.js"></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.css" rel="stylesheet" />
+    <!-- CSS Style -->
+    <link rel="stylesheet" href="index.css">
+</head>
+<body class="night-mode">
+    <!-- Mapbox Map Viewport Container -->
+    <div id="map"></div>
+
+    <!-- Scanning Overlay Effect -->
+    <div class="scanline"></div>
+    <div class="grid-overlay"></div>
+
+    <!-- Mapbox Token Initializer Prompt Overlay -->
+    <div id="token-prompt-overlay" class="prompt-overlay">
+        <div class="prompt-card glassmorphism">
+            <div class="prompt-logo">
+                <i class="fa-solid fa-satellite-dish pulse-icon text-cyan"></i>
+                <h2>BHARAT DRISHTI</h2>
+            </div>
+            <h3>Climate Digital Twin Engine</h3>
+            <p>This prototype utilizes Mapbox GL JS 3D Globe Projection and Satellite telemetry. Please input your Mapbox public access token below to initialize the visualization.</p>
+            
+            <div class="prompt-input-group">
+                <input type="text" id="overlay-mapbox-token" placeholder="pk.eyJ1Ijoi..." class="prompt-input">
+                <button id="overlay-btn-save" class="prompt-btn bg-cyan">INITIALIZE GLOBE</button>
+            </div>
+            
+            <div class="prompt-links">
+                <a href="https://account.mapbox.com/" target="_blank">
+                    <i class="fa-solid fa-arrow-up-right-from-square"></i> Get a free Mapbox Token
+                </a>
+                <span class="divider">|</span>
+                <button id="btn-bypass-prompt" class="bypass-btn">Bypass (UI Mockup Mode)</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Spatial HUD Overlay -->
+    <div id="hud-container">
+        
+        <!-- HEADER PANEL -->
+        <header class="hud-panel header-panel">
+            <div class="logo-area">
+                <i class="fa-solid fa-satellite-dish pulse-icon"></i>
+                <div class="title-desc">
+                    <h1>BHARAT DRISHTI</h1>
+                    <span class="sub-title">ISRO CLIMATE DIGITAL TWIN • LEVEL-4 OBSERVATION</span>
+                </div>
+            </div>
+            <div class="header-telemetry">
+                <div class="tel-item">
+                    <span class="label">ORBITAL BAND</span>
+                    <span class="value text-cyan">INSAT-3DR (GEOSYNC)</span>
+                </div>
+                <div class="tel-item">
+                    <span class="label">SYS STATUS</span>
+                    <span class="value text-green" id="sys-status-badge"><i class="fa-solid fa-circle-check"></i> NOMINAL</span>
+                </div>
+                <div class="tel-item">
+                    <span class="label">AI CONVERGENCE</span>
+                    <span class="value text-purple">98.42%</span>
+                </div>
+                <div class="tel-item date-time-container">
+                    <span class="label">MET DATA UT</span>
+                    <span class="value" id="current-time">2026-06-28 01:50:00</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- CONTROL SIDEBAR (LEFT) -->
+        <aside class="hud-panel sidebar-panel left-sidebar">
+            <div class="panel-section">
+                <h2><i class="fa-solid fa-key"></i> MAPBOX API KEY</h2>
+                <div class="token-sidebar-group">
+                    <input type="password" id="sidebar-mapbox-token" placeholder="Paste access token..." class="sidebar-token-input">
+                    <button id="sidebar-btn-save" class="sidebar-token-btn"><i class="fa-solid fa-check"></i></button>
+                </div>
+            </div>
+
+            <div class="panel-section">
+                <h2><i class="fa-solid fa-sliders"></i> ENGINE MODULES</h2>
+                <div class="system-meters">
+                    <div class="meter-group">
+                        <div class="meter-label"><span>AI FORECAST LOAD</span><span class="pct" id="ai-load">42%</span></div>
+                        <div class="meter-bar"><div class="meter-fill bg-cyan" style="width: 42%;"></div></div>
+                    </div>
+                    <div class="meter-group">
+                        <div class="meter-label"><span>TERRAIN RENDER</span><span class="pct" id="terrain-load">68%</span></div>
+                        <div class="meter-bar"><div class="meter-fill bg-purple" style="width: 68%;"></div></div>
+                    </div>
+                    <div class="meter-group">
+                        <div class="meter-label"><span>VECTOR CLIMATE FLUIDS</span><span class="pct" id="vector-load">81%</span></div>
+                        <div class="meter-bar"><div class="meter-fill bg-amber" style="width: 81%;"></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel-section">
+                <h2><i class="fa-solid fa-moon"></i> ENVIRONMENTAL MODE</h2>
+                <div class="mode-selector">
+                    <button class="mode-btn active" id="btn-night">
+                        <i class="fa-solid fa-moon"></i> NIGHT SPATIAL
+                    </button>
+                    <button class="mode-btn" id="btn-day">
+                        <i class="fa-solid fa-sun"></i> DAY SATELLITE
+                    </button>
+                </div>
+            </div>
+
+            <div class="panel-section">
+                <h2><i class="fa-solid fa-circle-nodes"></i> DIGITAL TWIN TELEMETRY</h2>
+                <div class="digital-data-grid">
+                    <div class="grid-card">
+                        <span class="card-title">GLOBE SPIN</span>
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="spin-toggle" checked>
+                            <label for="spin-toggle"></label>
+                        </div>
+                    </div>
+                    <div class="grid-card">
+                        <span class="card-title">ATMOSPHERE</span>
+                        <div class="toggle-switch">
+                            <input type="checkbox" id="atmosphere-toggle" checked>
+                            <label for="atmosphere-toggle"></label>
+                        </div>
+                    </div>
+                    <div class="grid-card text-center" id="btn-reset-view">
+                        <i class="fa-solid fa-arrows-to-eye"></i>
+                        <span>RESET VIEW</span>
+                    </div>
+                    <div class="grid-card text-center" id="btn-zoom-india">
+                        <i class="fa-solid fa-magnifying-glass-location"></i>
+                        <span>FOCUS INDIA</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel-section alert-section">
+                <h2><i class="fa-solid fa-triangle-exclamation text-red pulse-fast"></i> ACTIVE STORM ALERTS</h2>
+                <div id="storm-alerts-list">
+                    <div class="storm-alert-item level-critical">
+                        <span class="alert-badge bg-red">CYCLONE</span>
+                        <div class="alert-desc">
+                            <strong>Cyclone 'Asani'</strong>
+                            <span>Bay of Bengal (Vector: NW 18kts)</span>
+                        </div>
+                    </div>
+                    <div class="storm-alert-item level-warning">
+                        <span class="alert-badge bg-amber">HEATWAVE</span>
+                        <div class="alert-desc">
+                            <strong>Anomalous Heat Dome</strong>
+                            <span>NW India (Max Temp 47.2°C)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- LAYERS & WEATHER CONTROLS (RIGHT) -->
+        <aside class="hud-panel sidebar-panel right-sidebar">
+            <div class="panel-section">
+                <h2><i class="fa-solid fa-layer-group"></i> CLIMATE LAYERS</h2>
+                <div class="layer-list">
+                    <label class="layer-item active" data-layer="rainfall">
+                        <input type="checkbox" id="layer-rainfall" checked>
+                        <span class="custom-chk bg-blue"><i class="fa-solid fa-cloud-showers-heavy"></i></span>
+                        <div class="layer-info">
+                            <span class="layer-name">Rainfall Layer</span>
+                            <span class="layer-sub">Precipitation overlays & cloud depth</span>
+                        </div>
+                    </label>
+
+                    <label class="layer-item active" data-layer="temperature">
+                        <input type="checkbox" id="layer-temp" checked>
+                        <span class="custom-chk bg-red"><i class="fa-solid fa-temperature-half"></i></span>
+                        <div class="layer-info">
+                            <span class="layer-name">Temperature Layer</span>
+                            <span class="layer-sub">Thermal map & heat anomaly layers</span>
+                        </div>
+                    </label>
+
+                    <label class="layer-item active" data-layer="wind">
+                        <input type="checkbox" id="layer-wind" checked>
+                        <span class="custom-chk bg-green"><i class="fa-solid fa-wind"></i></span>
+                        <div class="layer-info">
+                            <span class="layer-name">Wind Layer</span>
+                            <span class="layer-sub">Live stream flow field vectors</span>
+                        </div>
+                    </label>
+
+                    <label class="layer-item active" data-layer="monsoon">
+                        <input type="checkbox" id="layer-monsoon" checked>
+                        <span class="custom-chk bg-cyan"><i class="fa-solid fa-water"></i></span>
+                        <div class="layer-info">
+                            <span class="layer-name">Monsoon Layer</span>
+                            <span class="layer-sub">Low pressure wave propagation fronts</span>
+                        </div>
+                    </label>
+
+                    <label class="layer-item" data-layer="heatwave">
+                        <input type="checkbox" id="layer-heatwave">
+                        <span class="custom-chk bg-amber"><i class="fa-solid fa-fire"></i></span>
+                        <div class="layer-info">
+                            <span class="layer-name">Heatwave Layer</span>
+                            <span class="layer-sub">LST thermal emission tracking</span>
+                        </div>
+                    </label>
+
+                    <label class="layer-item" data-layer="flood">
+                        <input type="checkbox" id="layer-flood">
+                        <span class="custom-chk bg-purple"><i class="fa-solid fa-house-flood-water"></i></span>
+                        <div class="layer-info">
+                            <span class="layer-name">Flood Risk Layer</span>
+                            <span class="layer-sub">Hydrological saturation models</span>
+                        </div>
+                    </label>
+
+                    <label class="layer-item" data-layer="drought">
+                        <input type="checkbox" id="layer-drought">
+                        <span class="custom-chk bg-orange"><i class="fa-solid fa-sun-plant-wilt"></i></span>
+                        <div class="layer-info">
+                            <span class="layer-name">Drought & Crop Stress</span>
+                            <span class="layer-sub">NDVI vegetation stress coefficients</span>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="panel-section">
+                <h2><i class="fa-solid fa-chart-line"></i> METEOROLOGICAL TELEMETRY</h2>
+                <div class="telemetry-grid">
+                    <div class="telemetry-box">
+                        <span class="val" id="telemetry-rain">284 mm</span>
+                        <span class="lbl">Avg. Monsoon Rain</span>
+                    </div>
+                    <div class="telemetry-box">
+                        <span class="val" id="telemetry-temp">31.2 °C</span>
+                        <span class="lbl">National Temp Index</span>
+                    </div>
+                    <div class="telemetry-box">
+                        <span class="val" id="telemetry-humidity">78 %</span>
+                        <span class="lbl">Mean Relative Humidity</span>
+                    </div>
+                    <div class="telemetry-box">
+                        <span class="val text-red" id="telemetry-risk">HIGH (6.8)</span>
+                        <span class="lbl">Climate Vulnerability</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- FLOATING HOLOGRAPHIC TOOLTIP CARD (HOVER EFFECT) -->
+        <div id="holographic-tooltip" class="holo-card">
+            <div class="holo-card-glow"></div>
+            <div class="holo-card-inner">
+                <div class="holo-header">
+                    <span id="tooltip-state-name" class="state-title">Maharashtra</span>
+                    <span class="state-code" id="tooltip-state-code">IN-MH</span>
+                </div>
+                <div class="holo-body">
+                    <div class="holo-stat"><span class="lbl">Rainfall Forecast:</span><span class="val text-cyan" id="tooltip-rain">18.2 mm</span></div>
+                    <div class="holo-stat"><span class="lbl">Temperature:</span><span class="val text-amber" id="tooltip-temp">32.4°C</span></div>
+                    <div class="holo-stat"><span class="lbl">Heatwave Index:</span><span class="val" id="tooltip-heat">NORMAL</span></div>
+                    <div class="holo-stat"><span class="lbl">Monsoon Activity:</span><span class="val text-green" id="tooltip-monsoon">ACTIVE</span></div>
+                    <div class="holo-stat-big">
+                        <div class="lbl">CLIMATE RISK SCORE</div>
+                        <div class="val-bar-wrapper">
+                            <span class="val text-red" id="tooltip-risk-val">7.2/10</span>
+                            <div class="val-bar"><div class="fill bg-red" id="tooltip-risk-bar" style="width: 72%;"></div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TIMELINE FOOTER -->
+        <footer class="hud-panel footer-panel">
+            <div class="timeline-controls">
+                <button class="control-btn" id="btn-play-pause">
+                    <i class="fa-solid fa-play"></i>
+                </button>
+                <div class="timeline-track-wrapper">
+                    <div class="timeline-marker-labels">
+                        <span class="marker-lbl" data-step="0">PAST CLIMATE</span>
+                        <span class="marker-lbl active" data-step="1">CURRENT OBSERVATION</span>
+                        <span class="marker-lbl" data-step="2">7-DAY AI FORECAST</span>
+                    </div>
+                    <div class="slider-container">
+                        <input type="range" id="timeline-slider" min="0" max="2" value="1" step="1">
+                        <div class="slider-ticks">
+                            <span class="tick active" id="tick-0"></span>
+                            <span class="tick active" id="tick-1"></span>
+                            <span class="tick" id="tick-2"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="timeline-meta-box">
+                    <span class="lbl font-mono">SELECTED ERA</span>
+                    <span class="val text-cyan" id="timeline-status-text">LIVE REAL-TIME DATA</span>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- Script loading -->
+    <script src="app.js"></script>
+</body>
+</html>

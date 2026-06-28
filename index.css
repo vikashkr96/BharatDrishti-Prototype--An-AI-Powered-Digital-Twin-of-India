@@ -1,0 +1,1216 @@
+/* ----------------------------------------------------
+   Bharat Drishti - Styling System & Spatial HUD CSS
+   ---------------------------------------------------- */
+
+/* Design Tokens & Variables */
+:root {
+    --bg-color: #020409;
+    --panel-bg: rgba(6, 11, 23, 0.55);
+    --panel-border: rgba(255, 255, 255, 0.08);
+    --text-primary: #ffffff;
+    --text-secondary: rgba(255, 255, 255, 0.6);
+    --glow-color: rgba(0, 243, 255, 0.2);
+    
+    /* Neon Palettes */
+    --cyan: #00f3ff;
+    --green: #39ff14;
+    --red: #ff3b30;
+    --purple: #bf5af2;
+    --amber: #ff9f0a;
+    --orange: #ff9500;
+    --blue: #0a84ff;
+
+    --font-heading: 'Orbitron', sans-serif;
+    --font-mono: 'Share Tech Mono', monospace;
+    --font-sans: 'Inter', sans-serif;
+
+    --transition-speed: 0.4s;
+}
+
+/* Day Mode Variables override */
+body.day-mode {
+    --bg-color: #f0f4f8;
+    --panel-bg: rgba(255, 255, 255, 0.7);
+    --panel-border: rgba(9, 30, 66, 0.12);
+    --text-primary: #0d1117;
+    --text-secondary: rgba(13, 17, 23, 0.7);
+    --glow-color: rgba(10, 132, 255, 0.15);
+    
+    --cyan: #0077b6;
+    --green: #2a9d8f;
+    --red: #d90429;
+    --purple: #7209b7;
+    --amber: #f77f00;
+    --orange: #d62828;
+    --blue: #03045e;
+}
+
+/* Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-primary);
+    font-family: var(--font-sans);
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+    transition: background-color var(--transition-speed) ease;
+}
+
+/* Mapbox Map Viewport Container */
+#map {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+/* Cybernetic Scanlines & Overlays */
+.scanline {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        rgba(18, 16, 16, 0) 50%, 
+        rgba(0, 0, 0, 0.2) 50%
+    );
+    background-size: 100% 4px;
+    z-index: 2;
+    pointer-events: none;
+    opacity: 0.2;
+}
+
+.grid-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: 40px 40px;
+    background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.015) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.015) 1px, transparent 1px);
+    z-index: 2;
+    pointer-events: none;
+}
+
+body.day-mode .grid-overlay {
+    background-image: 
+        linear-gradient(to right, rgba(9, 30, 66, 0.02) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(9, 30, 66, 0.02) 1px, transparent 1px);
+}
+
+/* --- HUD Spatial UI Panels --- */
+#hud-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    pointer-events: none;
+    display: grid;
+    grid-template-columns: 320px 1fr 340px;
+    grid-template-rows: auto 1fr auto;
+    grid-template-areas: 
+        "header header header"
+        "left-side center right-side"
+        "footer footer footer";
+    padding: 16px;
+    gap: 16px;
+}
+
+/* Standard HUD Glass Panel */
+.hud-panel {
+    background: var(--panel-bg);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    border: 1px solid var(--panel-border);
+    border-radius: 12px;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.25);
+    pointer-events: auto;
+    transition: background var(--transition-speed) ease, border-color var(--transition-speed) ease;
+}
+
+/* Glow Effects */
+.hud-panel::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 11px;
+    box-shadow: inset 0 0 10px var(--glow-color);
+    pointer-events: none;
+}
+
+/* Header Panel styling */
+.header-panel {
+    grid-area: header;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 24px;
+    height: 70px;
+    position: relative;
+    overflow: hidden;
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.logo-area h1 {
+    font-family: var(--font-heading);
+    font-size: 1.4rem;
+    font-weight: 900;
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px var(--cyan);
+}
+
+.logo-area .sub-title {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    letter-spacing: 1px;
+    display: block;
+    margin-top: 2px;
+}
+
+.pulse-icon {
+    font-size: 1.5rem;
+    color: var(--cyan);
+    animation: icon-pulse 2s infinite ease-in-out;
+}
+
+.header-telemetry {
+    display: flex;
+    gap: 24px;
+}
+
+.tel-item {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+.tel-item .label {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--text-secondary);
+}
+
+.tel-item .value {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+}
+
+/* Sidebar Panels styling */
+.sidebar-panel {
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+    gap: 16px;
+    height: 100%;
+    overflow-y: auto;
+}
+
+.left-sidebar {
+    grid-area: left-side;
+}
+
+.right-sidebar {
+    grid-area: right-side;
+}
+
+.panel-section {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 14px;
+}
+
+.panel-section:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.panel-section h2 {
+    font-family: var(--font-heading);
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Sidebar Token Settings UI */
+.token-sidebar-group {
+    display: flex;
+    gap: 6px;
+}
+
+.sidebar-token-input {
+    flex: 1;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-family: var(--font-mono);
+}
+
+.sidebar-token-input:focus {
+    border-color: var(--cyan);
+    outline: none;
+}
+
+.sidebar-token-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: var(--cyan);
+    padding: 6px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.sidebar-token-btn:hover {
+    background: var(--cyan);
+    color: #000;
+    border-color: var(--cyan);
+}
+
+/* Progress Meters */
+.system-meters {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.meter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.meter-label {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+}
+
+.meter-label .pct {
+    color: var(--cyan);
+}
+
+.meter-bar {
+    height: 5px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.meter-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.8s cubic-bezier(0.1, 0.8, 0.2, 1);
+}
+
+/* Day/Night Button Selectors */
+.mode-selector {
+    display: flex;
+    gap: 8px;
+}
+
+.mode-btn {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    transition: all 0.2s ease;
+}
+
+.mode-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.mode-btn.active {
+    background: var(--cyan);
+    color: #000;
+    border-color: var(--cyan);
+    box-shadow: 0 0 10px rgba(0, 243, 255, 0.4);
+    font-weight: bold;
+}
+
+/* Telemetry Grid for Globe Config */
+.digital-data-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.grid-card {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    cursor: pointer;
+    min-height: 52px;
+    transition: all 0.2s ease;
+}
+
+.grid-card:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.grid-card i {
+    font-size: 1.1rem;
+    margin-bottom: 2px;
+    color: var(--cyan);
+}
+
+.grid-card.text-center {
+    justify-content: center;
+}
+
+/* Custom Toggle Switches */
+.toggle-switch {
+    position: relative;
+    width: 32px;
+    height: 18px;
+    margin-top: 4px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-switch label {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(255, 255, 255, 0.15);
+    transition: .3s;
+    border-radius: 9px;
+}
+
+.toggle-switch label:before {
+    position: absolute;
+    content: "";
+    height: 12px;
+    width: 12px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .3s;
+    border-radius: 50%;
+}
+
+.toggle-switch input:checked + label {
+    background-color: var(--cyan);
+}
+
+.toggle-switch input:checked + label:before {
+    transform: translateX(14px);
+    background-color: #000;
+}
+
+/* Alert styles */
+.alert-section {
+    background: rgba(255, 59, 48, 0.05);
+    border-radius: 8px;
+    padding: 10px;
+    border: 1px solid rgba(255, 59, 48, 0.15);
+}
+
+.storm-alert-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+    padding: 8px;
+    margin-bottom: 8px;
+}
+
+.storm-alert-item:last-child {
+    margin-bottom: 0;
+}
+
+.alert-badge {
+    font-family: var(--font-heading);
+    font-size: 0.6rem;
+    font-weight: 900;
+    padding: 2px 6px;
+    border-radius: 3px;
+    color: #000;
+}
+
+.alert-desc {
+    display: flex;
+    flex-direction: column;
+}
+
+.alert-desc strong {
+    font-size: 0.75rem;
+}
+
+.alert-desc span {
+    font-size: 0.65rem;
+    color: var(--text-secondary);
+}
+
+/* Climate Layers List */
+.layer-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.layer-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.layer-item:hover {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.layer-item.active {
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+.layer-item input {
+    display: none;
+}
+
+.custom-chk {
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.3);
+    border: 1px solid rgba(255,255,255,0.1);
+    transition: all 0.2s ease;
+}
+
+.layer-item.active .custom-chk {
+    color: #000;
+    border-color: transparent;
+    box-shadow: 0 0 8px rgba(255,255,255,0.15);
+}
+
+.layer-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.layer-name {
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.layer-sub {
+    font-size: 0.6rem;
+    color: var(--text-secondary);
+}
+
+/* Telemetry Grid (Right Sidebar) */
+.telemetry-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+}
+
+.telemetry-box {
+    background: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.telemetry-box .val {
+    font-family: var(--font-mono);
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+.telemetry-box .lbl {
+    font-size: 0.6rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* --- Holographic Floating Card Tooltip (Mapbox Hover) --- */
+.holo-card {
+    position: absolute;
+    z-index: 100;
+    pointer-events: none;
+    width: 240px;
+    display: none;
+    opacity: 0;
+    transform: translateY(10px) scale(0.95);
+    transition: opacity 0.3s cubic-bezier(0.1, 0.8, 0.2, 1), transform 0.3s cubic-bezier(0.1, 0.8, 0.2, 1);
+}
+
+.holo-card.visible {
+    display: block;
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+.holo-card-glow {
+    position: absolute;
+    top: -2px; left: -2px; right: -2px; bottom: -2px;
+    background: linear-gradient(135deg, var(--cyan), var(--purple));
+    border-radius: 10px;
+    filter: blur(8px);
+    opacity: 0.3;
+    z-index: 1;
+}
+
+.holo-card-inner {
+    position: relative;
+    z-index: 2;
+    background: rgba(5, 10, 20, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1.5px solid rgba(0, 243, 255, 0.3);
+    border-radius: 8px;
+    padding: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.holo-card-inner::after {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(to bottom, transparent 50%, rgba(0, 243, 255, 0.05) 50%);
+    background-size: 100% 4px;
+    pointer-events: none;
+    border-radius: 7px;
+}
+
+.holo-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(0, 243, 255, 0.2);
+    padding-bottom: 8px;
+    margin-bottom: 8px;
+}
+
+.state-title {
+    font-family: var(--font-heading);
+    font-size: 0.85rem;
+    font-weight: bold;
+    color: #fff;
+    text-shadow: 0 0 6px var(--cyan);
+}
+
+.state-code {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--cyan);
+    border: 1px solid rgba(0, 243, 255, 0.3);
+    padding: 1px 4px;
+    border-radius: 3px;
+}
+
+.holo-body {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.holo-stat {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.7rem;
+}
+
+.holo-stat .lbl {
+    color: var(--text-secondary);
+}
+
+.holo-stat .val {
+    font-family: var(--font-mono);
+    font-weight: 500;
+}
+
+.holo-stat-big {
+    margin-top: 6px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    padding-top: 8px;
+}
+
+.holo-stat-big .lbl {
+    font-size: 0.6rem;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+}
+
+.val-bar-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.val-bar-wrapper .val {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.val-bar {
+    flex: 1;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.val-bar .fill {
+    height: 100%;
+    border-radius: 2px;
+}
+
+/* --- Mapbox Popup Overlay Stylings (Glassmorphism Overrides) --- */
+.mapboxgl-popup-content {
+    background: rgba(6, 12, 28, 0.85) !important;
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1.5px solid rgba(0, 243, 255, 0.3) !important;
+    border-radius: 12px !important;
+    color: var(--text-primary) !important;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6) !important;
+    padding: 20px !important;
+    font-family: var(--font-sans) !important;
+    width: 320px !important;
+    max-height: 520px;
+    overflow-y: auto;
+}
+
+body.day-mode .mapboxgl-popup-content {
+    background: rgba(255, 255, 255, 0.9) !important;
+    border-color: rgba(9, 30, 66, 0.25) !important;
+    color: #0d1117 !important;
+}
+
+.mapboxgl-popup-tip {
+    border-top-color: rgba(0, 243, 255, 0.3) !important;
+    border-bottom-color: rgba(0, 243, 255, 0.3) !important;
+    border-left-color: rgba(0, 243, 255, 0.3) !important;
+    border-right-color: rgba(0, 243, 255, 0.3) !important;
+}
+
+body.day-mode .mapboxgl-popup-tip {
+    border-top-color: rgba(9, 30, 66, 0.2) !important;
+    border-bottom-color: rgba(9, 30, 66, 0.2) !important;
+    border-left-color: rgba(9, 30, 66, 0.2) !important;
+    border-right-color: rgba(9, 30, 66, 0.2) !important;
+}
+
+.mapboxgl-popup-close-button {
+    color: var(--text-secondary) !important;
+    font-size: 1.2rem !important;
+    padding: 4px 8px !important;
+    border-radius: 50% !important;
+    line-height: 1 !important;
+    outline: none !important;
+    transition: all 0.2s ease !important;
+}
+
+.mapboxgl-popup-close-button:hover {
+    background: var(--red) !important;
+    color: #fff !important;
+}
+
+/* Custom Popup Content Layout styling */
+.mapbox-popup-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.popup-header {
+    border-bottom: 1px solid rgba(0, 243, 255, 0.2);
+    padding-bottom: 8px;
+}
+
+.popup-header h3 {
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    font-weight: 800;
+    text-shadow: 0 0 6px var(--cyan);
+}
+
+.popup-sub {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    color: var(--text-secondary);
+}
+
+.popup-indicators-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.popup-ind-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.72rem;
+    padding: 4px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+.popup-ind-item .lbl {
+    color: var(--text-secondary);
+}
+
+.popup-ind-item .val {
+    font-family: var(--font-mono);
+    font-weight: bold;
+}
+
+.popup-forecast-title {
+    font-family: var(--font-heading);
+    font-size: 0.65rem;
+    letter-spacing: 0.5px;
+    color: var(--text-secondary);
+    margin-top: 4px;
+}
+
+.popup-bars {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    height: 70px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    padding-bottom: 4px;
+}
+
+.popup-bar-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+}
+
+.popup-bar-fill {
+    width: 14px;
+    border-radius: 2px 2px 0 0;
+    position: relative;
+    background: var(--amber);
+}
+
+.popup-bar-fill.text-red {
+    background: var(--red);
+}
+
+.popup-bar-fill span {
+    font-family: var(--font-mono);
+    font-size: 0.45rem;
+    position: absolute;
+    top: -12px;
+    color: var(--text-primary);
+}
+
+.popup-bar-item .day-lbl {
+    font-size: 0.5rem;
+    color: var(--text-secondary);
+    margin-top: 4px;
+}
+
+.popup-advisor {
+    background: rgba(191, 90, 242, 0.05);
+    border: 1px solid rgba(191, 90, 242, 0.15);
+    border-radius: 6px;
+    padding: 8px;
+    font-size: 0.65rem;
+    line-height: 1.35;
+    color: var(--text-secondary);
+}
+
+/* --- API Token Prompt Overlay Panel --- */
+.prompt-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(2, 4, 9, 0.88);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity var(--transition-speed) ease;
+    pointer-events: auto;
+}
+
+.prompt-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.prompt-card {
+    width: 480px;
+    padding: 36px;
+    border-radius: 16px;
+    text-align: center;
+    border: 1.5px solid rgba(0, 243, 255, 0.25);
+    box-shadow: 0 0 45px rgba(0, 243, 255, 0.12);
+}
+
+.prompt-logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 12px;
+}
+
+.prompt-logo h2 {
+    font-family: var(--font-heading);
+    font-size: 1.7rem;
+    font-weight: 900;
+    letter-spacing: 2px;
+    text-shadow: 0 0 10px var(--cyan);
+}
+
+.prompt-card h3 {
+    font-family: var(--font-heading);
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.prompt-card p {
+    font-size: 0.82rem;
+    line-height: 1.55;
+    color: var(--text-secondary);
+    margin-bottom: 24px;
+}
+
+.prompt-input-group {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.prompt-input {
+    flex: 1;
+    background: rgba(0, 0, 0, 0.5);
+    border: 1.2px solid rgba(255, 255, 255, 0.15);
+    color: #fff;
+    padding: 12px 16px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-family: var(--font-mono);
+}
+
+.prompt-input:focus {
+    border-color: var(--cyan);
+    outline: none;
+    box-shadow: 0 0 8px rgba(0, 243, 255, 0.2);
+}
+
+.prompt-btn {
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-family: var(--font-heading);
+    font-size: 0.8rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #000;
+}
+
+.prompt-btn:hover {
+    transform: scale(1.02);
+    box-shadow: 0 0 12px rgba(0, 243, 255, 0.4);
+}
+
+.prompt-links {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    font-size: 0.75rem;
+}
+
+.prompt-links a {
+    color: var(--cyan);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.prompt-links a:hover {
+    text-decoration: underline;
+}
+
+.divider {
+    color: rgba(255, 255, 255, 0.15);
+}
+
+.bypass-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 0.75rem;
+}
+
+.bypass-btn:hover {
+    color: #fff;
+    text-decoration: underline;
+}
+
+/* --- Timeline Footer Panel --- */
+.footer-panel {
+    grid-area: footer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 12px 24px;
+    height: 75px;
+    position: relative;
+}
+
+.timeline-controls {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 900px;
+    gap: 24px;
+}
+
+.control-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-primary);
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    box-shadow: 0 0 10px rgba(0,0,0,0.15);
+    transition: all 0.2s ease;
+}
+
+.control-btn:hover {
+    background: var(--cyan);
+    color: #000;
+    border-color: var(--cyan);
+    box-shadow: 0 0 10px rgba(0, 243, 255, 0.3);
+}
+
+.timeline-track-wrapper {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.timeline-marker-labels {
+    display: flex;
+    justify-content: space-between;
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.5px;
+    color: var(--text-secondary);
+}
+
+.marker-lbl.active {
+    color: var(--cyan);
+    font-weight: bold;
+    text-shadow: 0 0 5px var(--glow-color);
+}
+
+.slider-container {
+    position: relative;
+    width: 100%;
+    height: 18px;
+}
+
+/* Futuristic Cyber Range Input */
+#timeline-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.15);
+    outline: none;
+    border-radius: 2px;
+    position: absolute;
+    top: 7px;
+    z-index: 5;
+    cursor: pointer;
+}
+
+#timeline-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--cyan);
+    border: 2px solid #000;
+    box-shadow: 0 0 8px var(--cyan);
+    transition: transform 0.1s ease;
+}
+
+#timeline-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+}
+
+.slider-ticks {
+    display: flex;
+    justify-content: space-between;
+    position: absolute;
+    width: 100%;
+    top: 5px;
+    padding: 0 3px;
+    pointer-events: none;
+}
+
+.slider-ticks .tick {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(0,0,0,0.5);
+    z-index: 3;
+}
+
+.slider-ticks .tick.active {
+    background: var(--cyan);
+}
+
+.timeline-meta-box {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    min-width: 140px;
+}
+
+.timeline-meta-box .lbl {
+    font-size: 0.6rem;
+    color: var(--text-secondary);
+}
+
+.timeline-meta-box .val {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+}
+
+/* Utilities classes */
+.text-cyan { color: var(--cyan); }
+.text-green { color: var(--green); }
+.text-red { color: var(--red); }
+.text-purple { color: var(--purple); }
+.text-amber { color: var(--amber); }
+.bg-cyan { background-color: var(--cyan); }
+.bg-green { background-color: var(--green); }
+.bg-red { background-color: var(--red); }
+.bg-purple { background-color: var(--purple); }
+.bg-amber { background-color: var(--amber); }
+.bg-orange { background-color: var(--orange); }
+.bg-blue { background-color: var(--blue); }
+
+.pulse-fast {
+    animation: icon-pulse 1s infinite ease-in-out;
+}
+
+/* Keyframes Animations */
+@keyframes icon-pulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; filter: drop-shadow(0 0 4px currentColor); }
+}
+
+/* Scrollbar tweaks */
+.sidebar-panel::-webkit-scrollbar {
+    width: 4px;
+}
+.sidebar-panel::-webkit-scrollbar-track {
+    background: transparent;
+}
+.sidebar-panel::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 2px;
+}
+.sidebar-panel::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+/* Media Query Responsive Adjustments */
+@media (max-width: 1200px) {
+    #hud-container {
+        grid-template-columns: 280px 1fr 300px;
+    }
+}

@@ -1,0 +1,16 @@
+# Python models / huge files
+*.npy
+*.pt
+*.pth
+*.h5
+models/
+
+# node
+node_modules/
+
+# env
+.env
+
+# build
+dist/
+build/
