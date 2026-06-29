@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-title">BharatDrishti | App Viewer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.js"></script>
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.css" rel="stylesheet" />
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+
+    <!-- Accessibility & Top Links Bar -->
+    <div class="top-accessibility-bar">
+        <div class="container top-bar-flex">
+            <div class="top-left">
+                <a href="#main-content">Skip to main Content</a>
+            </div>
+            <div class="top-right">
+                <span>Select your language: </span>
+                <select class="lang-select">
+                    <option>English</option>
+                    <option>हिन्दी (Hindi)</option>
+                </select>
+                <span class="divider">|</span>
+                <a href="#"><i class="fa-solid fa-user"></i> SignUp</a>
+                <span class="divider">|</span>
+                <a href="#"><i class="fa-solid fa-right-to-bracket"></i> Login</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Header -->
+    <header class="main-header">
+        <div class="container header-flex">
+            <div class="header-logos">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/1/17/Emblem_of_India.svg" alt="Ashok Stambh" class="logo emblem">
+                <div class="logo bd-logo" style="display: flex; align-items: center; justify-content: center; background: #0b3d91; color: white; border-radius: 50%; width: 70px; height: 70px; font-weight: bold; font-size: 24px;"><i class="fa-solid fa-earth-asia"></i></div>
+            </div>
+            <div class="header-titles">
+                <h1>BharatDrishti</h1>
+                <h2>AI-Powered Digital Twin of India's Climate</h2>
+                <h3>Bharatiya Antariksh Hackathon 2026</h3>
+            </div>
+            <div class="header-right">
+                <div class="search-box">
+                    <input type="text" placeholder="Search BharatDrishti...">
+                    <button><i class="fa-solid fa-magnifying-glass"></i></button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Menu -->
+    <nav class="main-navigation">
+        <div class="container">
+            <ul class="nav-menu">
+                <li><a href="index.html"><i class="fa-solid fa-house"></i> Home</a></li>
+                <li class="dropdown">
+                    <a href="#">Missions <i class="fa-solid fa-caret-down"></i></a>
+                </li>
+                <li class="dropdown">
+                    <a href="#">Catalog <i class="fa-solid fa-caret-down"></i></a>
+                </li>
+                <li class="dropdown">
+                    <a href="#">Galleries <i class="fa-solid fa-caret-down"></i></a>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="active">Data Access <i class="fa-solid fa-caret-down"></i></a>
+                </li>
+                <li class="dropdown">
+                    <a href="#">Open Data <i class="fa-solid fa-caret-down"></i></a>
+                </li>
+                <li class="dropdown"><a href="#">Reports <i class="fa-solid fa-caret-down"></i></a></li>
+                <li class="dropdown"><a href="#">Calibration <i class="fa-solid fa-caret-down"></i></a></li>
+                <li><a href="#">Help</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- News Ticker -->
+    <div class="news-ticker-bar">
+        <div class="container ticker-flex">
+            <div class="ticker-label">Announcements</div>
+            <marquee behavior="scroll" direction="left" class="ticker-content">
+                BharatDrishti is upgraded for better performance! Experiencing issues? Check supported browsers. | New AI Digital Twin Model for IMD Datasets Now Live
+            </marquee>
+        </div>
+    </div>
+
+    <!-- Dynamic Main Content Area -->
+    <main class="container main-content-area" id="main-content">
+        
+        <!-- Left Sidebar: Cascading Dropdowns -->
+        <aside class="sidebar-left">
+            <div class="sidebar-menu-box">
+                <h3 class="box-header"><i class="fa-solid fa-location-dot"></i> Select Location</h3>
+                <div style="padding: 15px;">
+                    <label style="font-weight: bold; font-size: 13px; display:block; margin-bottom: 5px;">State / Territory</label>
+                    <select id="state-select" style="width: 100%; padding: 8px; margin-bottom: 15px; border: 1px solid var(--border-color); border-radius: 4px;">
+                        <option value="">-- Select State --</option>
+                        <!-- Injected by JS -->
+                    </select>
+
+                    <label style="font-weight: bold; font-size: 13px; display:block; margin-bottom: 5px;">City / Region</label>
+                    <select id="city-select" disabled style="width: 100%; padding: 8px; border: 1px solid var(--border-color); border-radius: 4px;">
+                        <option value="">-- Select City --</option>
+                        <!-- Injected by JS -->
+                    </select>
+                    
+                    <button id="btn-analyze" style="width: 100%; padding: 10px; margin-top: 15px; background: var(--isro-blue); color: white; border: none; cursor: pointer; border-radius: 4px; font-weight: bold;">Analyze Region</button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Center Stage: Map Viewer -->
+        <section class="center-stage">
+            <div class="map-wrapper-box">
+                <div class="map-header">
+                    <h2 id="map-title">Loading Application...</h2>
+                    <div class="map-tools">
+                        <span class="live-badge">● LIVE</span>
+                    </div>
+                </div>
+                <div id="map" style="height: 500px; width: 100%;"></div>
+                <div class="map-footer">
+                    <span>Data Source: BharatDrishti Climate Engine | Rendering Mode: Specific App Filter</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Right Sidebar: Dynamic App Information -->
+        <aside class="sidebar-right">
+            <div class="sidebar-menu-box mb-20">
+                <h3 class="box-header bg-isro-blue text-white" id="info-header" style="background: var(--isro-blue); color: white;">App Information</h3>
+                
+                <div style="padding: 15px;">
+                    <img id="info-image" src="" alt="App Icon" style="width: 100%; max-height: 180px; object-fit: cover; border-radius: 4px; margin-bottom: 15px; border: 1px solid var(--border-color);">
+                    <h4 id="info-title" style="font-size: 16px; color: var(--isro-blue); margin-bottom: 10px;">Loading...</h4>
+                    <p id="info-desc" style="font-size: 13px; color: var(--text-gray); line-height: 1.5; margin-bottom: 15px;">Please wait...</p>
+                    
+                    <!-- Graph Placeholder (Rendered via CSS for prototyping) -->
+                    <div style="border: 1px solid var(--border-color); padding: 10px; border-radius: 4px; background: var(--bg-gray);">
+                        <h5 style="font-size: 12px; margin-bottom: 10px; text-align: center;">24Hr Predictive Graph</h5>
+                        <div style="height: 80px; display: flex; align-items: flex-end; justify-content: space-around; padding-bottom: 5px; border-bottom: 1px solid var(--border-color);">
+                            <div class="graph-bar" style="width: 15%; height: 30%; background: var(--isro-blue);"></div>
+                            <div class="graph-bar" style="width: 15%; height: 50%; background: var(--isro-blue);"></div>
+                            <div class="graph-bar" style="width: 15%; height: 90%; background: var(--red);"></div>
+                            <div class="graph-bar" style="width: 15%; height: 60%; background: var(--isro-blue);"></div>
+                            <div class="graph-bar" style="width: 15%; height: 40%; background: var(--isro-blue);"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+    </main>
+
+    <!-- Standard Footer -->
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; 2026 BharatDrishti - AI Climate Digital Twin.</p>
+            <p>Developed for the Bharatiya Antariksh Hackathon 2026.</p>
+            <div class="footer-links">
+                <a href="#">Sitemap</a> | <a href="#">Help</a> | <a href="#">Contact Us</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Script loading -->
+    <script src="app_viewer.js"></script>
+</body>
+</html>
